@@ -1,5 +1,6 @@
-async function getPosts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+async function getPosts(type) {
+  const query = type ? `?type=${type}` : "";
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts${query}`, {
     cache: "no-store",
   });
 
@@ -10,8 +11,10 @@ async function getPosts() {
   return res.json();
 }
 
-export default async function PostsPage() {
-  const posts = await getPosts();
+export default async function PostsPage({ searchParams }) {
+  const params = await searchParams;
+  const type = params?.type || "";
+  const posts = await getPosts(type);
 
   return (
     <main className="min-h-screen px-6 py-10">
@@ -21,6 +24,39 @@ export default async function PostsPage() {
           <p className="mt-2 text-gray-600">
             Các bài đăng đồ thất lạc và đồ nhặt được
           </p>
+        </div>
+
+        <div className="mb-6 flex flex-wrap gap-3">
+          <a
+            href="/posts"
+            className={`rounded-full px-4 py-2 text-sm font-medium ${
+              type === ""
+                ? "bg-blue-700 text-white"
+                : "bg-white text-gray-700 shadow"
+            }`}
+          >
+            Tất cả
+          </a>
+          <a
+            href="/posts?type=lost"
+            className={`rounded-full px-4 py-2 text-sm font-medium ${
+              type === "lost"
+                ? "bg-red-600 text-white"
+                : "bg-white text-gray-700 shadow"
+            }`}
+          >
+            Thất lạc
+          </a>
+          <a
+            href="/posts?type=found"
+            className={`rounded-full px-4 py-2 text-sm font-medium ${
+              type === "found"
+                ? "bg-green-600 text-white"
+                : "bg-white text-gray-700 shadow"
+            }`}
+          >
+            Nhặt được
+          </a>
         </div>
 
         <div className="grid gap-4">

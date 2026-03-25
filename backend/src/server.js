@@ -16,11 +16,23 @@ app.get("/", (req, res) => {
 });
 
 app.get("/posts", async (req, res) => {
-  const posts = await prisma.post.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  try {
+    const { type } = req.query;
 
-  res.json(posts);
+    const posts = await prisma.post.findMany({
+      where: {
+        ...(type ? { type } : {}),
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Lỗi khi lấy danh sách bài đăng" });
+  }
 });
 
 app.get("/posts/:id", async (req, res) => {
