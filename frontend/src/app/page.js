@@ -1,29 +1,36 @@
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-white text-gray-900">
-      <section className="mx-auto max-w-5xl px-6 py-16">
-        <h1 className="text-4xl font-bold text-blue-700">
-          Website Tìm Kiếm Đồ Vật Thất Lạc
-        </h1>
+    <main className="min-h-screen px-6 py-10">
+      <section className="mx-auto max-w-5xl rounded-3xl bg-white px-8 py-14 shadow">
+        <div className="max-w-3xl">
+          <span className="rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">
+            Website tìm kiếm đồ vật thất lạc
+          </span>
 
-        <p className="mt-4 text-lg text-gray-600">
-          Nơi sinh viên đăng tin đồ bị mất hoặc đồ nhặt được trong trường.
-        </p>
+          <h1 className="mt-5 text-4xl font-bold leading-tight text-blue-700">
+            Giúp sinh viên đăng tin mất đồ và nhặt được đồ trong trường
+          </h1>
 
-        <div className="mt-8 flex gap-4">
-          <a
-            href="/posts"
-            className="rounded-lg bg-blue-700 px-5 py-3 text-white"
-          >
-            Xem danh sách
-          </a>
+          <p className="mt-4 text-lg text-gray-600">
+            Bạn có thể đăng bài khi bị mất đồ, hoặc đăng thông tin khi nhặt được
+            đồ để người khác dễ tìm lại hơn.
+          </p>
 
-          <a
-            href="/create"
-            className="rounded-lg border border-blue-700 px-5 py-3 text-blue-700"
-          >
-            Đăng bài
-          </a>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <a
+              href="/posts"
+              className="rounded-xl bg-blue-700 px-5 py-3 font-medium text-white"
+            >
+              Xem danh sách bài đăng
+            </a>
+
+            <a
+              href="/create"
+              className="rounded-xl border border-blue-700 px-5 py-3 font-medium text-blue-700"
+            >
+              Đăng bài ngay
+            </a>
+          </div>
         </div>
       </section>
     </main>

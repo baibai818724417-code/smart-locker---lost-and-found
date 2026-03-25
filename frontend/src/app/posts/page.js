@@ -14,31 +14,54 @@ export default async function PostsPage() {
   const posts = await getPosts();
 
   return (
-    <main className="min-h-screen bg-gray-50 px-6 py-10">
+    <main className="min-h-screen px-6 py-10">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-3xl font-bold text-blue-700">Danh sách bài đăng</h1>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-blue-700">Danh sách bài đăng</h1>
+          <p className="mt-2 text-gray-600">
+            Các bài đăng đồ thất lạc và đồ nhặt được
+          </p>
+        </div>
 
-        <div className="mt-8 grid gap-4 text-black placeholder:text-gray-500">
+        <div className="grid gap-4">
           {posts.length === 0 ? (
-            <p>Chưa có bài đăng nào.</p>
+            <div className="rounded-xl bg-white p-6 shadow">
+              <p className="text-gray-600">Chưa có bài đăng nào.</p>
+            </div>
           ) : (
             posts.map((post) => (
               <a
                 key={post.id}
                 href={`/posts/${post.id}`}
-                className="block rounded-xl bg-white p-5 shadow"
+                className="block rounded-xl bg-white p-5 shadow transition hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold">{post.title}</h2>
-                  <span className="rounded-full bg-gray-100 px-3 py-1 text-sm">
-                    {post.type}
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      {post.title}
+                    </h2>
+                    <p className="mt-2 text-gray-600">{post.description}</p>
+                  </div>
+
+                  <span
+                    className={`rounded-full px-3 py-1 text-sm font-medium ${
+                      post.type === "lost"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-green-100 text-green-700"
+                    }`}
+                  >
+                    {post.type === "lost" ? "Thất lạc" : "Nhặt được"}
                   </span>
                 </div>
 
-                <p className="mt-2 text-gray-600">{post.description}</p>
-                <p className="mt-2 text-sm text-gray-500">
-                  {post.category} • {post.location}
-                </p>
+                <div className="mt-4 flex flex-wrap gap-3 text-sm text-gray-500">
+                  <span className="rounded-full bg-gray-100 px-3 py-1">
+                    {post.category}
+                  </span>
+                  <span className="rounded-full bg-gray-100 px-3 py-1">
+                    {post.location}
+                  </span>
+                </div>
               </a>
             ))
           )}
