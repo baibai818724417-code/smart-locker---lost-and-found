@@ -20,23 +20,41 @@ export default function RootLayout({ children }) {
   return (
     <html lang="vi">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
+        className={`${geistSans.variable} ${geistMono.variable} bg-gray-50 text-gray-900 antialiased`}
       >
-        <header className="border-b bg-white">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-            <a href="/" className="text-xl font-bold text-blue-700">
+        <header className="sticky top-0 z-50 bg-white/90 shadow-sm backdrop-blur">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+            <a
+              href="/"
+              className="text-2xl font-bold tracking-tight text-blue-700"
+            >
               Lost & Found UIT
             </a>
 
-            <nav className="flex gap-4 text-sm font-medium">
-              <a href="/" className="text-gray-700 hover:text-blue-700">
+            <nav className="flex items-center gap-2 text-sm font-medium">
+              <a
+                href="/"
+                className="rounded-full px-4 py-2 text-gray-700 transition hover:bg-blue-50 hover:text-blue-700"
+              >
                 Trang chủ
               </a>
-              <a href="/posts" className="text-gray-700 hover:text-blue-700">
+              <a
+                href="/posts"
+                className="rounded-full px-4 py-2 text-gray-700 transition hover:bg-blue-50 hover:text-blue-700"
+              >
                 Danh sách
               </a>
-              <a href="/create" className="text-gray-700 hover:text-blue-700">
+              <a
+                href="/create"
+                className="rounded-full px-4 py-2 text-gray-700 transition hover:bg-blue-50 hover:text-blue-700"
+              >
                 Đăng bài
+              </a>
+              <a
+                href="/contact"
+                className="rounded-full bg-blue-700 px-4 py-2 text-white transition hover:bg-blue-800"
+              >
+                Liên hệ
               </a>
             </nav>
           </div>

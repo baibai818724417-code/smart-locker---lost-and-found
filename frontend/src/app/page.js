@@ -1,6 +1,6 @@
 export default function HomePage() {
   return (
-    <main className="min-h-screen px-6 py-10">
+    <main className="h-[calc(100vh-73px)] overflow-hidden px-6 py-10">
       <section className="mx-auto max-w-5xl rounded-3xl bg-white px-8 py-14 shadow">
         <div className="max-w-3xl">
           <span className="rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">

@@ -17,11 +17,41 @@ app.get("/", (req, res) => {
 
 app.get("/posts", async (req, res) => {
   try {
-    const { type } = req.query;
+    const { type, keyword } = req.query;
 
     const posts = await prisma.post.findMany({
       where: {
         ...(type ? { type } : {}),
+        ...(keyword
+          ? {
+              OR: [
+                {
+                  title: {
+                    contains: keyword,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  description: {
+                    contains: keyword,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  location: {
+                    contains: keyword,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  category: {
+                    contains: keyword,
+                    mode: "insensitive",
+                  },
+                },
+              ],
+            }
+          : {}),
       },
       orderBy: {
         createdAt: "desc",

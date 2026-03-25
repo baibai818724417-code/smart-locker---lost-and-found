@@ -1,5 +1,10 @@
-async function getPosts(type) {
-  const query = type ? `?type=${type}` : "";
+async function getPosts(type, keyword) {
+  const params = new URLSearchParams();
+
+  if (type) params.set("type", type);
+  if (keyword) params.set("keyword", keyword);
+
+  const query = params.toString() ? `?${params.toString()}` : "";
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts${query}`, {
     cache: "no-store",
   });
@@ -14,7 +19,8 @@ async function getPosts(type) {
 export default async function PostsPage({ searchParams }) {
   const params = await searchParams;
   const type = params?.type || "";
-  const posts = await getPosts(type);
+  const keyword = params?.keyword || "";
+  const posts = await getPosts(type, keyword);
 
   return (
     <main className="min-h-screen px-6 py-10">
@@ -26,36 +32,73 @@ export default async function PostsPage({ searchParams }) {
           </p>
         </div>
 
-        <div className="mb-6 flex flex-wrap gap-3">
+        <form action="/posts" className="mb-6 rounded-2xl bg-white p-4 shadow">
+          <div className="flex flex-col gap-3 md:flex-row">
+            <input
+              type="text"
+              name="keyword"
+              defaultValue={keyword}
+              placeholder="Tìm theo tên đồ vật, mô tả, địa điểm..."
+              className="h-12 w-full rounded-xl border border-gray-300 px-4 text-black outline-none placeholder:text-gray-500"
+            />
+
+            {type && <input type="hidden" name="type" value={type} />}
+
+            <button className="h-12 cursor-pointer whitespace-nowrap rounded-xl bg-blue-700 px-6 font-medium text-white">
+              Tìm kiếm
+            </button>
+          </div>
+        </form>
+
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <div className="flex flex-wrap gap-3">
+            <a
+              href={keyword ? `/posts?keyword=${encodeURIComponent(keyword)}` : "/posts"}
+              className={`rounded-full px-4 py-2 text-sm font-medium ${
+                type === ""
+                  ? "bg-blue-700 text-white"
+                  : "bg-white text-gray-700 shadow"
+              }`}
+            >
+              Tất cả
+            </a>
+
+            <a
+              href={
+                keyword
+                  ? `/posts?type=lost&keyword=${encodeURIComponent(keyword)}`
+                  : "/posts?type=lost"
+              }
+              className={`rounded-full px-4 py-2 text-sm font-medium ${
+                type === "lost"
+                  ? "bg-red-600 text-white"
+                  : "bg-white text-gray-700 shadow"
+              }`}
+            >
+              Thất lạc
+            </a>
+
+            <a
+              href={
+                keyword
+                  ? `/posts?type=found&keyword=${encodeURIComponent(keyword)}`
+                  : "/posts?type=found"
+              }
+              className={`rounded-full px-4 py-2 text-sm font-medium ${
+                type === "found"
+                  ? "bg-green-600 text-white"
+                  : "bg-white text-gray-700 shadow"
+              }`}
+            >
+              Nhặt được
+            </a>
+          </div>
+
           <a
             href="/posts"
-            className={`rounded-full px-4 py-2 text-sm font-medium ${
-              type === ""
-                ? "bg-blue-700 text-white"
-                : "bg-white text-gray-700 shadow"
-            }`}
+            className="whitespace-nowrap rounded-xl bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300"
           >
-            Tất cả
-          </a>
-          <a
-            href="/posts?type=lost"
-            className={`rounded-full px-4 py-2 text-sm font-medium ${
-              type === "lost"
-                ? "bg-red-600 text-white"
-                : "bg-white text-gray-700 shadow"
-            }`}
-          >
-            Thất lạc
-          </a>
-          <a
-            href="/posts?type=found"
-            className={`rounded-full px-4 py-2 text-sm font-medium ${
-              type === "found"
-                ? "bg-green-600 text-white"
-                : "bg-white text-gray-700 shadow"
-            }`}
-          >
-            Nhặt được
+            Xóa bộ lọc
           </a>
         </div>
 

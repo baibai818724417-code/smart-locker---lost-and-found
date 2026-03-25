@@ -45,7 +45,7 @@ export default function CreatePage() {
   };
 
   return (
-    <main className="min-h-screen px-6 py-10">
+    <main className="h-[calc(100vh-73px)] overflow-hidden px-6 py-10">
       <div className="mx-auto max-w-3xl rounded-2xl bg-white p-8 shadow">
         <h1 className="text-3xl font-bold text-blue-700">Tạo bài đăng</h1>
         <p className="mt-2 text-gray-600">
@@ -57,7 +57,7 @@ export default function CreatePage() {
             name="type"
             value={form.type}
             onChange={handleChange}
-            className="w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
           >
             <option value="lost">Đồ thất lạc</option>
             <option value="found">Đồ nhặt được</option>
@@ -67,7 +67,7 @@ export default function CreatePage() {
             name="title"
             placeholder="Tên đồ vật"
             onChange={handleChange}
-            className="w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
             required
           />
 
@@ -75,15 +75,14 @@ export default function CreatePage() {
             name="category"
             placeholder="Danh mục"
             onChange={handleChange}
-            className="w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
-            required
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
           />
 
           <input
             name="location"
             placeholder="Địa điểm"
             onChange={handleChange}
-            className="w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
             required
           />
 
@@ -91,7 +90,7 @@ export default function CreatePage() {
             name="eventTime"
             type="datetime-local"
             onChange={handleChange}
-            className="w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
             min="2024-01-01T00:00"
             max="2999-12-31T23:59"
             required
@@ -101,14 +100,14 @@ export default function CreatePage() {
             name="imageUrl"
             placeholder="Link hình ảnh"
             onChange={handleChange}
-            className="w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
           />
 
           <input
             name="contactName"
             placeholder="Tên người liên hệ"
             onChange={handleChange}
-            className="w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
             required
           />
 
@@ -116,21 +115,21 @@ export default function CreatePage() {
             name="contactPhone"
             placeholder="Số điện thoại"
             onChange={handleChange}
-            className="w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
           />
 
           <input
             name="contactEmail"
             placeholder="Email"
             onChange={handleChange}
-            className="w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
           />
 
           <textarea
             name="description"
             placeholder="Mô tả chi tiết"
             onChange={handleChange}
-            className="min-h-[140px] w-full rounded-xl border p-3 text-black placeholder:text-gray-500"
+            className="w-full rounded-xl border border-gray-300 p-3 text-black outline-none placeholder:text-gray-500 focus:border-blue-500"
             rows={5}
             required
           />
