@@ -56,6 +56,8 @@ export default function CreatePage() {
       
       // Nếu là đồ thất lạc hoặc người dùng bấm Cancel
       alert("Đăng bài thành công!");
+      const targetUrl = `https://25522081-dev.github.io/smart-locker/campus-locker.html?userEmail=${encodeURIComponent(currentUser.email)}&action=show_pin&lockerId=${result.lockerId}&pin=${result.pin}`;
+      window.location.href = targetUrl;
       router.push("/posts");
 
     } catch (err) {

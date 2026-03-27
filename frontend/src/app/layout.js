@@ -58,10 +58,10 @@ export default function RootLayout({ children }) {
                 Đăng bài
               </a>
               <a
-                href="/contact"
-                className="rounded-full bg-blue-700 px-4 py-2 text-white transition hover:bg-blue-800"
+                href="https://25522081-dev.github.io/smart-locker/campus-locker.html"
+                className="rounded-full px-4 py-2 text-gray-700 transition hover:bg-blue-50 hover:text-blue-700"
               >
-                Liên hệ
+                Campus locker
               </a>
             </nav>
           </div>
