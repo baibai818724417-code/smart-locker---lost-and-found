@@ -76,10 +76,7 @@ export default async function PostDetailPage({ params }) {
             <p className="mt-1 font-medium">{post.contactPhone || "Chưa có"}</p>
           </div>
 
-          <div className="rounded-xl bg-gray-50 p-4 md:col-span-2">
-            <p className="text-sm text-gray-500">Email</p>
-            <p className="mt-1 font-medium">{post.contactEmail || "Chưa có"}</p>
-          </div>
+          
         </div>
       </div>
     </main>

@@ -5,9 +5,21 @@ import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase"; 
 import Link from "next/link";
 
+// Hàm hỗ trợ loại bỏ dấu tiếng Việt và đưa về chữ thường
+const removeAccents = (str) => {
+  if (!str) return "";
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Xóa các dấu sắc, huyền, hỏi, ngã, nặng
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .toLowerCase();
+};
+
 export default function PostsPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -31,6 +43,28 @@ export default function PostsPage() {
     fetchPosts();
   }, []);
 
+  // THUẬT TOÁN TÌM KIẾM NỚI LỎNG
+  const filteredPosts = posts.filter((post) => {
+    // Nếu không nhập gì, hiển thị tất cả
+    const cleanQuery = removeAccents(searchQuery).trim();
+    if (!cleanQuery) return true;
+
+    // Chuẩn hóa tiêu đề và mô tả của bài viết về dạng không dấu
+    const cleanTitle = removeAccents(post.title);
+    const cleanDesc = removeAccents(post.description);
+    const cleanLocation = removeAccents(post.location);
+    
+    // Tách từ khóa người dùng nhập thành các từ đơn lẻ (Ví dụ: "do mixi" -> ["do", "mixi"])
+    const queryWords = cleanQuery.split(/\s+/);
+    
+    // Điều kiện nới lỏng: TẤT CẢ các từ người dùng gõ đều phải xuất hiện trong bài viết (không quan trọng thứ tự)
+    return queryWords.every(word => 
+      cleanTitle.includes(word) || 
+      cleanDesc.includes(word) || 
+      cleanLocation.includes(word)
+    );
+  });
+
   if (loading) {
     return (
       <main className="min-h-[calc(100vh-73px)] p-10 flex justify-center items-center bg-gray-50">
@@ -45,23 +79,48 @@ export default function PostsPage() {
   return (
     <main className="min-h-[calc(100vh-73px)] p-6 md:p-10 bg-gray-50">
       <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <h1 className="text-3xl font-bold text-blue-700">Danh sách đồ thất lạc & nhặt được</h1>
-          <Link 
-            href="/create" 
-            className="bg-blue-700 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-800 transition-all shadow-md"
-          >
-            + Đăng bài mới
-          </Link>
+        
+        {/* Khu vực Tiêu đề, Nút thêm mới và Ô tìm kiếm */}
+        <div className="mb-8 flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <h1 className="text-3xl font-bold text-blue-700">Danh sách đồ thất lạc & nhặt được</h1>
+            <Link 
+              href="/create" 
+              className="bg-blue-700 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-800 transition-all shadow-md shrink-0"
+            >
+              + Đăng bài mới
+            </Link>
+          </div>
+          
+          {/* Ô tìm kiếm */}
+          <div className="w-full">
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
+                🔍
+              </span>
+              <input
+                type="text"
+                placeholder="Tìm kiếm vật phẩm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm transition-all bg-white"
+              />
+            </div>
+          </div>
         </div>
 
-        {posts.length === 0 ? (
+        {/* Danh sách bài viết sau khi lọc */}
+        {filteredPosts.length === 0 ? (
           <div className="bg-white p-14 rounded-3xl shadow-sm border border-gray-100 text-center text-gray-500">
-            <p className="text-xl">Hiện chưa có bài đăng nào.</p>
+            <p className="text-xl">
+              {posts.length === 0 
+                ? "Hiện chưa có bài đăng nào." 
+                : "Không tìm thấy bài viết nào phù hợp với từ khóa của bạn."}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
+            {filteredPosts.map((post) => (
               <div key={post.id} className="bg-white rounded-3xl shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-100 flex flex-col h-full relative overflow-hidden">
                 
                 {/* Loại bài đăng */}
@@ -92,8 +151,8 @@ export default function PostsPage() {
                     <span><strong>Thời gian:</strong> {new Date(post.eventTime).toLocaleString('vi-VN')}</span>
                   </p>
                   <p className="flex items-start gap-2">
-                    <span className="text-gray-400 mt-0.5"></span> 
-                    <span><strong>Liên hệ (Zalo, email...):</strong> {post.contact}</span>
+                    <span className="text-gray-400 mt-0.5">📞</span> 
+                    <span><strong>Liên hệ:</strong> {post.contact}</span>
                   </p>
                   {post.assignedLocker && (
                     <p className="flex items-start gap-2 text-blue-700">
@@ -103,11 +162,10 @@ export default function PostsPage() {
                   )}
                 </div>
                 
-                {/* THÔNG TIN LIÊN HỆ 1:1 - PHIÊN BẢN NÚT BẤM XỊN */}
+                {/* THÔNG TIN LIÊN HỆ */}
                 <div className="mt-auto pt-4 border-t border-gray-100">
                   <div className="flex flex-col gap-3">
                     
-                    {/* Nút Gọi điện - Ưu tiên hàng đầu */}
                     {post.contactPhone && (
                       <a 
                         href={`tel:${post.contactPhone}`}
@@ -117,27 +175,7 @@ export default function PostsPage() {
                       </a>
                     )}
 
-                    <div className="flex gap-2">
-                      {/* Nút Gửi Email */}
-                      <a 
-                        href={`mailto:${post.authorEmail}`}
-                        className="flex-1 flex items-center justify-center gap-2 py-2 border-2 border-blue-600 text-blue-600 rounded-xl text-sm font-bold hover:bg-blue-50 transition-colors"
-                      >
-                        ✉️ Email
-                      </a>
-                      
-                      {/* Nút Chat Zalo (Tự động mở Zalo qua SĐT) */}
-                      {post.contactPhone && (
-                        <a 
-                          href={`https://zalo.me/${post.contactPhone}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-2 py-2 border-2 border-blue-400 text-blue-500 rounded-xl text-sm font-bold hover:bg-blue-50 transition-colors"
-                        >
-                          💬 Zalo
-                        </a>
-                      )}
-                    </div>
+                   
 
                     <p className="text-[10px] text-gray-400 text-center italic mt-1 uppercase font-medium">
                       Xác minh kỹ trước khi trao đổi mã PIN
