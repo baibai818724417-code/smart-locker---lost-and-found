@@ -5,12 +5,11 @@ import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase"; 
 import Link from "next/link";
 
-// Hàm hỗ trợ loại bỏ dấu tiếng Việt và đưa về chữ thường
 const removeAccents = (str) => {
   if (!str) return "";
   return str
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Xóa các dấu sắc, huyền, hỏi, ngã, nặng
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/đ/g, "d")
     .replace(/Đ/g, "D")
     .toLowerCase();
@@ -43,21 +42,16 @@ export default function PostsPage() {
     fetchPosts();
   }, []);
 
-  // THUẬT TOÁN TÌM KIẾM NỚI LỎNG
   const filteredPosts = posts.filter((post) => {
-    // Nếu không nhập gì, hiển thị tất cả
     const cleanQuery = removeAccents(searchQuery).trim();
     if (!cleanQuery) return true;
 
-    // Chuẩn hóa tiêu đề và mô tả của bài viết về dạng không dấu
     const cleanTitle = removeAccents(post.title);
     const cleanDesc = removeAccents(post.description);
     const cleanLocation = removeAccents(post.location);
     
-    // Tách từ khóa người dùng nhập thành các từ đơn lẻ (Ví dụ: "do mixi" -> ["do", "mixi"])
     const queryWords = cleanQuery.split(/\s+/);
     
-    // Điều kiện nới lỏng: TẤT CẢ các từ người dùng gõ đều phải xuất hiện trong bài viết (không quan trọng thứ tự)
     return queryWords.every(word => 
       cleanTitle.includes(word) || 
       cleanDesc.includes(word) || 
@@ -80,7 +74,6 @@ export default function PostsPage() {
     <main className="min-h-[calc(100vh-73px)] p-6 md:p-10 bg-gray-50">
       <div className="mx-auto max-w-6xl">
         
-        {/* Khu vực Tiêu đề, Nút thêm mới và Ô tìm kiếm */}
         <div className="mb-8 flex flex-col gap-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <h1 className="text-3xl font-bold text-blue-700">Danh sách đồ thất lạc & nhặt được</h1>
@@ -92,7 +85,6 @@ export default function PostsPage() {
             </Link>
           </div>
           
-          {/* Ô tìm kiếm */}
           <div className="w-full">
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
@@ -109,7 +101,6 @@ export default function PostsPage() {
           </div>
         </div>
 
-        {/* Danh sách bài viết sau khi lọc */}
         {filteredPosts.length === 0 ? (
           <div className="bg-white p-14 rounded-3xl shadow-sm border border-gray-100 text-center text-gray-500">
             <p className="text-xl">
@@ -123,7 +114,6 @@ export default function PostsPage() {
             {filteredPosts.map((post) => (
               <div key={post.id} className="bg-white rounded-3xl shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-100 flex flex-col h-full relative overflow-hidden">
                 
-                {/* Loại bài đăng */}
                 <div className="flex justify-between items-start mb-4">
                   <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide ${
                     post.type === 'lost' 
@@ -140,7 +130,6 @@ export default function PostsPage() {
                 <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{post.title}</h3>
                 <p className="text-sm text-gray-600 mb-5 line-clamp-3 flex-grow">{post.description}</p>
                 
-                {/* Chi tiết vị trí & Tủ */}
                 <div className="space-y-3 mb-5 text-sm text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-100">
                   <p className="flex items-start gap-2">
                     <span className="text-gray-400 mt-0.5">📍</span> 
@@ -150,10 +139,27 @@ export default function PostsPage() {
                     <span className="text-gray-400 mt-0.5">⏰</span> 
                     <span><strong>Thời gian:</strong> {new Date(post.eventTime).toLocaleString('vi-VN')}</span>
                   </p>
+                  
+                  {/* Khung này giữ nguyên hiển thị Email như bạn muốn */}
                   <p className="flex items-start gap-2">
-                    <span className="text-gray-400 mt-0.5">📞</span> 
-                    <span><strong>Liên hệ:</strong> {post.contact}</span>
+                    <span className="text-gray-400 mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                      </svg>
+                    </span> 
+                    <span>
+                      <strong>Email:</strong>{" "}
+                      {post.contactEmail ? (
+                        <a href={`mailto:${post.contactEmail}`} className="text-blue-600 hover:underline">
+                          {post.contactEmail}
+                        </a>
+                      ) : (
+                        "Chưa có"
+                      )}
+                    </span>
                   </p>
+
                   {post.assignedLocker && (
                     <p className="flex items-start gap-2 text-blue-700">
                       <span className="mt-0.5">📦</span> 
@@ -162,20 +168,25 @@ export default function PostsPage() {
                   )}
                 </div>
                 
-                {/* THÔNG TIN LIÊN HỆ */}
+                {/* Nút bự dưới cùng: Đổi thành nút "Gọi" kèm số điện thoại */}
                 <div className="mt-auto pt-4 border-t border-gray-100">
                   <div className="flex flex-col gap-3">
                     
-                    {post.contactPhone && (
+                    {post.contactPhone ? (
                       <a 
                         href={`tel:${post.contactPhone}`}
-                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-all shadow-sm"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-sm"
                       >
-                        <span className="text-lg">📞</span> Gọi: {post.contactPhone}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        Gọi: {post.contactPhone}
                       </a>
+                    ) : (
+                      <div className="text-center text-sm text-gray-500 py-2">
+                        Không có số điện thoại
+                      </div>
                     )}
-
-                   
 
                     <p className="text-[10px] text-gray-400 text-center italic mt-1 uppercase font-medium">
                       Xác minh kỹ trước khi trao đổi mã PIN
